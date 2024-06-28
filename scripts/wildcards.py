@@ -30,8 +30,8 @@ class WildcardsScript(scripts.Script):
                 if os.path.exists(replacement_file):
                     with open(replacement_file, encoding="utf8") as f:
                         replacements[card]=f.read().splitlines()
-                        random.shuffle(replacements[card])
                         if not shared.opts.wildcards_allow_repeats:
+                            gen.shuffle(replacements[card])
                             replacements[card] = list(dict.fromkeys(replacements[card])) 
                 else:
                     if replacement_file not in warned_about_files:
@@ -42,6 +42,8 @@ class WildcardsScript(scripts.Script):
             def replace_key(match):
                 card = match.group(1)
                 if card in replacements and replacements[card]:
+                    if shared.opts.wildcards_allow_repeats:
+                        return gen.choice(replacements[card])
                     return replacements[card].pop(0)
                 return ""
 
